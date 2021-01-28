@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header class='bg-dark text-center'>
+        <h1 class='text-white'>Weather Dashboard</h1>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-4">
+                <div id='search' class="form-inline">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search Cities" id='search-input'>
+                    <button class="btn btn-outline-success my-2 my-sm-0" onclick='search()'>Search</button>
+                </div>
+                <ul id="search-history" class='list-group'>
+                    <li class="list-group-item list-group-item-action">Austin</li>
+                </ul>
+            </aside>
+            <main id='weather-display' class="col-8">
+                <div class="card" id="current-day">
+                    <h2 class="card-title">City Name <i class='fa fa-cloud'></i></h2>
+                    <p id="temperature" class='card-text'>Temperature</p>
+                    <p id="humidity" class="card-text">Humidity</p> 
+                    <p id="wind-speed" class="card-text">Wind Speed</p>
+                    <p class="card-text">UV Index <span id="uv" class="bg-danger">15</span></p>
+                </div>
+                <div id="5day">
+                    <h2>5-Day Forecast</h2>
+                    <div id="5-day-cards" class="d-flex flex-row">
+                        <div>
+                            <div class="card bg-info"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
