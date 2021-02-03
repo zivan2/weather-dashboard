@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="script.js" defer></script>
 </head>
@@ -23,8 +23,11 @@
                 </ul>
             </aside>
             <main id='weather-display' class="col-8">
+                <div id="loading">
+
+                </div>
                 <div class="card" id="current-day">
-                    <h2 class="card-title">City Name <i class='fa fa-cloud'></i></h2>
+                    <h2 class="card-title"><span id="city-name">City Name</span> <i id='weather-icon-main'>&50n</i></h2>
                     <p id="temperature" class='card-text'>Temperature</p>
                     <p id="humidity" class="card-text">Humidity</p> 
                     <p id="wind-speed" class="card-text">Wind Speed</p>
