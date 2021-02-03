@@ -2,24 +2,38 @@ let openweather = 'd5b49d362cf029e62e23b7eca9882ae7'
 let openweatherURL = 'https://api.openweathermap.org/data/2.5/onecall?q=${city}&appid=d5b49d362cf029e62e23b7eca9882ae7&units=imperial'
 
 let cities
+let citiesOpenweather
+// if (localStorage.getItem('cities')) {
+//     cities = JSON.parse(localStorage.getItem('cities'))
+// } else {
+//     fetch('htps://pkgtstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json')   
+//     .then(response => response.json())
+//     .then(data => {
+//         cities = data
+//         console.log(cities)
+//         localStorage.setItem('cities', JSON.stringify(cities))
+//     })
+// }
+
 if (localStorage.getItem('cities')) {
     cities = JSON.parse(localStorage.getItem('cities'))
 } else {
-    fetch('htps://pkgtstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json')   
-    .then(response => response.json())
-    .then(data => {
-        cities = data
-        console.log(cities)
-        localStorage.setItem('cities', JSON.stringify(cities))
-    })
+    fetch(`${document.URL.substr(0,document.URL.lastIndexOf('/'))}/city_list.json`).then(response => {
+        if (response.ok) {
+            return response.json()
+        } else {
+            lg(response)
+        }
+    }).then(data => cities = data)
+    .catch(err => lg(err))
 }
 
 async function search() {
     eid('search-history').innerHTML = ''
     let cityIn = eid('search-input').value
     let matches = cities.filter(city => city.name.toLowerCase() == cityIn.toLowerCase())
-    if (matches[0]) {
-        appendSearchResult(message='No cities found.')
+    if (!matches[0]) {
+        appendSearchResult(null, null, null, 'No cities found.')
     } else {
         for (let i in matches) {
             appendSearchResult(matches[i].name, matches[i].subcountry, matches[i].country)
@@ -29,13 +43,13 @@ async function search() {
 
 async function populateWeather(cityName) {
     eid('loading').style.display = 'block'
-    eid('current-day').style.display = 'none'
+    eid('weather-display').style.display = 'none'
 
     let coords = await getCoords(cityName)
     let weather = await (
         await fetch(weatherQuery(coords.lat, coords.lon))
     ).json()
-    console.log(weather)
+    lg(weather)
 
     eid('temperature').innerHTML = `Temperature: ${weather.current.temp}°F`
     eid('humidity').innerHTML = `Humidity: ${weather.current.humidity}%`
@@ -49,7 +63,8 @@ async function populateWeather(cityName) {
         if (uvi < 6) {
             if (uvi < 3) {
                 if (uvi == 0) {
-                    eid('uv-text').innerHTML = 'No UV data exists for this area.'
+                    uvEl.className = 'bg-white'
+                    eid('uv-text').innerHTML = '<span style="color: black;">No UV data exists for this area.</span>'
                 } else {
                     // low
                     uvEl.className = 'bg-primary'
@@ -65,11 +80,11 @@ async function populateWeather(cityName) {
     } else {
         // very high
         uvEl.className = 'bg-danger'
-        uvEl.innerHTML = uvEl.innerHTML + '(!!!)'
+        eid('uv-text').innerHTML = eid('uv-text').innerHTML + '(!!!)'
     }
 
     eid('loading').style.display = 'none'
-    eid('current-day').style.display = 'block'
+    eid('weather-display').style.display = 'block'
 }
 
 function iconURL(code) {
@@ -100,3 +115,7 @@ function appendSearchResult(cityName, citySubCountry, cityCountry, message=null)
 function txt(text) { return document.createTextNode(text) }
 
 function eid(id) { return document.getElementById(id) } // this is way too long
+
+function normal(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") }
+
+function lg(item) { console.log(item) }

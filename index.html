@@ -27,16 +27,16 @@
                     <li class="list-group-item list-group-item-action">Austin</li>
                 </ul>
             </aside>
+            <div id="loading" style='display: none;'>
+                <progress></progress>
+            </div>
             <main id='weather-display' class="col-8">
-                <div id="loading" style='display: none;'>
-                    <progress></progress>
-                </div>
                 <div class="card" id="current-day" style='display: block;'>
                     <h2 class="card-title"><span id="city-name"></span> <i class='bg-black p-1' id='weather-icon-main'></i></h2>
                     <p id="temperature" class='card-text'>Temperature</p>
                     <p id="humidity" class="card-text">Humidity</p> 
                     <p id="wind-speed" class="card-text">Wind Speed</p>
-                    <p class="card-text">UV Index <span id="uv" class="bg-primary p-1"><span id='uv-text'></span></span></p>
+                    <p class="card-text">UV Index: <span id="uv" class="bg-black p-1"><span id='uv-text'></span></span></p>
                 </div>
                 <div id="5day">
                     <h2>5-Day Forecast</h2>
