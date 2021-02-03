@@ -15,23 +15,26 @@ let citiesOpenweather
 //     })
 // }
 
-if (localStorage.getItem('cities')) {
-    cities = JSON.parse(localStorage.getItem('cities'))
-} else {
-    fetch(`${document.URL.substr(0,document.URL.lastIndexOf('/'))}/city_list.json`).then(response => {
-        if (response.ok) {
-            return response.json()
-        } else {
-            lg(response)
+fetch(`${document.URL.substr(0,document.URL.lastIndexOf('/'))}/city_list.json`, {
+    headers : { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
         }
-    }).then(data => cities = data)
-    .catch(err => lg(err))
-}
+    }).then(response => {
+    if (response.ok) {
+        return response.json()
+    } else {
+        lg(response)
+    }
+}).then(data => {
+    cities = data
+})
+.catch(err => lg(err))
 
 async function search() {
     eid('search-history').innerHTML = ''
     let cityIn = eid('search-input').value
-    let matches = cities.filter(city => city.name.toLowerCase() == cityIn.toLowerCase())
+    let matches = cities.filter(city => norm(city.name) == norm(cityIn)
     if (!matches[0]) {
         appendSearchResult(null, null, null, 'No cities found.')
     } else {
@@ -116,6 +119,6 @@ function txt(text) { return document.createTextNode(text) }
 
 function eid(id) { return document.getElementById(id) } // this is way too long
 
-function normal(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") }
+function normal(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() }
 
 function lg(item) { console.log(item) }
