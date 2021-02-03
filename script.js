@@ -15,33 +15,45 @@ if (localStorage.getItem('cities')) {
 }
 
 async function search() {
-    let cityIn = document.getElementById('search-input').value
-    if (!cities.find(city => city.name.toLowerCase() == cityIn.toLowerCase())) {
-        alert('City not found. Try again.')
+    eid('search-history').innerHTML = ''
+    let cityIn = eid('search-input').value
+    let matches = cities.filter(city => city.name.toLowerCase() == cityIn.toLowerCase())
+    if (matches[0]) {
+        appendSearchResult(message='No cities found.')
     } else {
-        let coords = await getCoords(cityIn)
-        let weather = await (
-            await fetch(weatherQuery(coords.lat, coords.lon))
-        ).json()
-        console.log(weather)
-        populateWeather(weather)
+        for (let i in matches) {
+            appendSearchResult(matches[i].name, matches[i].subcountry, matches[i].country)
+        }
     }
 }
 
-function populateWeather(weather) {
-    document.getElementById('temperature').innerHTML = `Temperature: ${weather.current.temp}°F`
-    document.getElementById('humidity').innerHTML = `Humidity: ${weather.current.humidity}%`
-    document.getElementById('wind-speed').innerHTML = `Wind Speed: ${weather.current.wind_speed}MPH`
-    document.
-    document.getElementById('weather-icon-main').innerHTML = `<img src='${iconURL(weather.current.weather[0].icon)}' style='width: 2rem;'>`
+async function populateWeather(cityName) {
+    eid('loading').style.display = 'block'
+    eid('current-day').style.display = 'none'
+
+    let coords = await getCoords(cityName)
+    let weather = await (
+        await fetch(weatherQuery(coords.lat, coords.lon))
+    ).json()
+    console.log(weather)
+
+    eid('temperature').innerHTML = `Temperature: ${weather.current.temp}°F`
+    eid('humidity').innerHTML = `Humidity: ${weather.current.humidity}%`
+    eid('wind-speed').innerHTML = `Wind Speed: ${weather.current.wind_speed}MPH`
+    eid('city-name').innerHTML = cityName
+    eid('weather-icon-main').innerHTML = `<img src='${iconURL(weather.current.weather[0].icon)}' style='width: 3rem; mix-blend-mode: difference;'>`
     let uvi = weather.current.uvi
-    let uvEl = document.getElementById('uv')
-    uvEl.innerHTML = uvi
+    let uvEl = eid('uv')
+    eid('uv-text').innerHTML = uvi
     if (uvi < 8) {
         if (uvi < 6) {
             if (uvi < 3) {
-                // low
-                uvEl.className = 'bg-primary'
+                if (uvi == 0) {
+                    eid('uv-text').innerHTML = 'No UV data exists for this area.'
+                } else {
+                    // low
+                    uvEl.className = 'bg-primary'
+                }
             } else {
                 // moderate
                 uvEl.className = 'bg-warning'
@@ -55,6 +67,9 @@ function populateWeather(weather) {
         uvEl.className = 'bg-danger'
         uvEl.innerHTML = uvEl.innerHTML + '(!!!)'
     }
+
+    eid('loading').style.display = 'none'
+    eid('current-day').style.display = 'block'
 }
 
 function iconURL(code) {
@@ -72,3 +87,16 @@ async function getCoords(city) {
 }
 
 function weatherQuery(lat, lon) { return `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=d5b49d362cf029e62e23b7eca9882ae7&units=imperial` }
+
+function appendSearchResult(cityName, citySubCountry, cityCountry, message=null) {
+    let shist = eid('search-history')
+    if (message) {
+        shist.innerHTML = message
+        return
+    }
+    shist.innerHTML = shist.innerHTML + `<li class="list-group-item list-group-item-action" onclick="populateWeather('${cityName}')">${cityName}, ${citySubCountry}, ${cityCountry}</li>`
+}
+
+function txt(text) { return document.createTextNode(text) }
+
+function eid(id) { return document.getElementById(id) } // this is way too long
